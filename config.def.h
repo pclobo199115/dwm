@@ -1,4 +1,5 @@
 /* See LICENSE file for copyright and license details. */
+#include <X11/XF86keysym.h>
 
 /* appearance */
 static const unsigned int borderpx  = 1;        /* border pixel of windows */
@@ -7,7 +8,7 @@ static const int swallowfloating    = 0;        /* 1 means swallow floating wind
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
 static const int user_bh            = 24;       /* 0 means that dwm will calculate bar height, >= 1 means dwm will user_bh as bar height */
-static const char *fonts[]          = { "monospace:size=10" };
+static const char *fonts[]          = { "Fira Code:size=10", "Material Icons:size=11" };
 static const char dmenufont[]       = "monospace:size=10";
 static char normbgcolor[]           = "#222222";
 static char normbordercolor[]       = "#444444";
@@ -29,17 +30,15 @@ static const Rule rules[] = {
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	 */
-	/* class     instance  title           tags mask  isfloating  isterminal  noswallow  monitor */
-	{ "Gimp",    NULL,     NULL,           0,         1,          0,           0,        -1 },
-	{ "Firefox", NULL,     NULL,           1 << 8,    0,          0,          -1,        -1 },
-	{ "St",      NULL,     NULL,           0,         0,          1,           0,        -1 },
-	{ NULL,      NULL,     "Event Tester", 0,         0,          0,           1,        -1 }, /* xev */
+	/* class      instance    title       tags mask     isfloating   monitor */
+	{ "Brave-browser",  	NULL,       NULL,       1 << 1,       0,           -1 },
+	{ "zoom", 	 	NULL,       NULL,       1 << 2,       0,           -1 },
 };
 
 /* layout(s) */
-static float mfact     = 0.55; /* factor of master area size [0.05..0.95] */
-static int nmaster     = 1;    /* number of clients in master area */
-static int resizehints = 1;    /* 1 means respect size hints in tiled resizals */
+static const float mfact     = 0.55; /* factor of master area size [0.05..0.95] */
+static const int nmaster     = 1;    /* number of clients in master area */
+static const int resizehints = 0;    /* 1 means respect size hints in tiled resizals */
 
 static const Layout layouts[] = {
 	/* symbol     arrange function */
@@ -49,7 +48,7 @@ static const Layout layouts[] = {
 };
 
 /* key definitions */
-#define MODKEY Mod1Mask
+#define MODKEY Mod4Mask
 #define TAGKEYS(KEY,TAG) \
 	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
 	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
@@ -61,8 +60,8 @@ static const Layout layouts[] = {
 
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbordercolor, "-sf", selfgcolor, NULL };
-static const char *termcmd[]  = { "st", NULL };
+static const char *dmenucmd[] = { "dmenu_run", NULL };
+static const char *termcmd[]  = { "alacritty", NULL };
 
 /*
  * Xresources preferences to load at startup
@@ -85,29 +84,29 @@ ResourcePref resources[] = {
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
-	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
-	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
-	{ MODKEY,                       XK_b,      togglebar,      {0} },
-	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
+	{ MODKEY,                       XK_space,  spawn,          {.v = dmenucmd } },
+	{ MODKEY,                       XK_Return, spawn,          {.v = termcmd } },
+/*	{ MODKEY,                       XK_b,      togglebar,      {0} }, */
+	{ MODKEY,                       XK_j,      focusstack,     {.i = +1} },
 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
-	{ MODKEY,                       XK_i,      incnmaster,     {.i = +1 } },
-	{ MODKEY,                       XK_d,      incnmaster,     {.i = -1 } },
+/*  { MODKEY,                       XK_i,      incnmaster,     {.i = +1 } }, */
+/*  { MODKEY,                       XK_d,      incnmaster,     {.i = -1 } }, */
 	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
 	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
-	{ MODKEY,                       XK_Return, zoom,           {0} },
-	{ MODKEY,                       XK_Tab,    view,           {0} },
-	{ MODKEY|ShiftMask,             XK_c,      killclient,     {0} },
+/*  { MODKEY,                       XK_Return, zoom,           {0} }, */
+/*  { MODKEY,                       XK_Tab,    view,           {0} }, */
+	{ MODKEY,                       XK_q,      killclient,     {0} },
 	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
-	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} },
-	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
-	{ MODKEY,                       XK_space,  setlayout,      {0} },
-	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} },
+	{ MODKEY,                       XK_y,      setlayout,      {.v = &layouts[1]} },
+/*	{ MODKEY,                       XK_u,      setlayout,      {.v = &layouts[2]} }, */
+/*	{ MODKEY,                       XK_space,  setlayout,      {0} }, */
+/*	{ MODKEY|ShiftMask,             XK_space,  togglefloating, {0} }, */
 	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
 	{ MODKEY|ShiftMask,             XK_0,      tag,            {.ui = ~0 } },
-	{ MODKEY,                       XK_comma,  focusmon,       {.i = -1 } },
-	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } },
-	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
-	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
+/*	{ MODKEY,                       XK_comma,  focusmon,       {.i = -1 } }, */
+/*	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } }, */
+/*	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } }, */
+/*	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } }, */
 	TAGKEYS(                        XK_1,                      0)
 	TAGKEYS(                        XK_2,                      1)
 	TAGKEYS(                        XK_3,                      2)
@@ -117,7 +116,20 @@ static Key keys[] = {
 	TAGKEYS(                        XK_7,                      6)
 	TAGKEYS(                        XK_8,                      7)
 	TAGKEYS(                        XK_9,                      8)
-	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
+	{ MODKEY|ShiftMask,             XK_r,      quit,           {0} },
+
+	/* Launch */
+	{ MODKEY,                       XK_e,      			spawn,      		 SHCMD("nautilus") },
+	{ MODKEY,                       XK_b,      			spawn,      		 SHCMD("$BROWSER") },
+	{ MODKEY,                       XK_Escape, 			spawn,      		 SHCMD("power") },
+	{ MODKEY,                       XK_p,      			spawn,      		 SHCMD("displays") },
+	/* Volume */
+	{ 0,   		                XF86XK_AudioLowerVolume,      	spawn,      		 SHCMD("pulsemixer --change-volume -5; pkill -RTMIN+1 dwmblocks") },
+	{ 0,   		                XF86XK_AudioMute,      		spawn,      		 SHCMD("pulsemixer --toggle-mute; pkill -RTMIN+1 dwmblocks") },
+	{ 0,   		                XF86XK_AudioRaiseVolume,      	spawn,      		 SHCMD("pulsemixer --change-volume +5; pkill -RTMIN+1 dwmblocks") },
+	/* Brightness */
+	{ 0,   		                XF86XK_MonBrightnessDown,      	spawn,      		 SHCMD("light -U 10; pkill -RTMIN+2 dwmblocks") },
+	{ 0,   		                XF86XK_MonBrightnessUp,      	spawn,      		 SHCMD("light -A 10; pkill -RTMIN+2 dwmblocks") },
 };
 
 /* button definitions */
