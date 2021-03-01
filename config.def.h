@@ -101,6 +101,8 @@ static Key keys[] = {
 	{ MODKEY,                       XK_b,      			spawn,      		 SHCMD("$BROWSER") },
 	{ MODKEY,                       XK_Escape, 			spawn,      		 SHCMD("power") },
 	{ MODKEY,                       XK_p,      			spawn,      		 SHCMD("displays") },
+	{ 0,                            XK_Print, 			spawn,      		 SHCMD("screen-save") },
+	{ ShiftMask,                    XK_Print, 			spawn,      		 SHCMD("screen-clip") },
 	/* Volume */
 	{ 0,   		                XF86XK_AudioLowerVolume,      	spawn,      		 SHCMD("pulsemixer --change-volume -5; pkill -RTMIN+1 dwmblocks") },
 	{ 0,   		                XF86XK_AudioMute,      		spawn,      		 SHCMD("pulsemixer --toggle-mute; pkill -RTMIN+1 dwmblocks") },
